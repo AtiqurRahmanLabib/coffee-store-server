@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 })
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.6gfue.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -34,15 +34,22 @@ async function run() {
       const cursor = database.find();
       const result = await cursor.toArray();
       res.send(result)
-    })
+    });
 
     app.post('/coffee', async (req, res) => {
       const newCoffee = req.body;
       console.log(newCoffee)
       const result = await database.insertOne(newCoffee)
       res.send(result)
-    })
+    });
 
+    app.delete('/coffee/:id', async (req, res) => {
+      console.log(req.body)
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) };
+      const result = await database.deleteOne(query)
+      res.send(result)
+    })
 
     await client.connect();
     // Send a ping to confirm a successful connection
