@@ -36,6 +36,34 @@ async function run() {
       res.send(result)
     });
 
+    app.put('/coffee/:id', async (req, res) => {
+      console.log(req.body)
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedCoffee = req.body;
+      const updateDoc = {
+        $set: {
+          coffeeName: updatedCoffee.coffeeName,
+           Supplier: updatedCoffee.Supplier,
+           Cetegory: updatedCoffee.Cetegory,
+           Chef: updatedCoffee.Chef,
+           taste: updatedCoffee.taste,
+           Details: updatedCoffee.Details,
+           Photo: updatedCoffee.Photo
+        },
+      };
+      const result = await database.updateOne(query, updateDoc, options);
+      res.send(result)
+    })
+
+    app.get('/coffee/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await database.findOne(query)
+      res.send(result)
+    })
+
     app.post('/coffee', async (req, res) => {
       const newCoffee = req.body;
       console.log(newCoffee)
